@@ -2,10 +2,9 @@
 
 namespace ElasticAppScoutDriver\Factories;
 
-use ElasticAdapter\Search\SearchRequest;
 use Laravel\Scout\Builder;
 
 interface SearchRequestFactoryInterface
 {
-    public function makeFromBuilder(Builder $builder, array $options = []): SearchRequest;
+    public function makeFromBuilder(Builder $builder, array $options = []): ?array;
 }

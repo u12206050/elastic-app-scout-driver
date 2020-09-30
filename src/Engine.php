@@ -4,6 +4,7 @@ namespace ElasticAppScoutDriver;
 
 use Elastic\AppSearch\Client\Client;
 use Elastic\AppSearch\Client\ClientBuilder;
+use ElasticAppScoutDriver\Factories\SearchRequestFactoryInterface;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection as BaseCollection;
@@ -29,8 +30,8 @@ final class Engine extends AbstractEngine
     public function __construct(
       SearchRequestFactoryInterface $searchRequestFactory
     ) {
-        $apiEndpoint = config('elastic.scout_driver.apiEndpoint');
-        $apiKey = config('elastic.scout_driver.apiKey');
+        $apiEndpoint = config('elastic_app.scout_driver.apiEndpoint');
+        $apiKey = config('elastic_app.scout_driver.apiKey');
 
         $this->client = ClientBuilder::create($apiEndpoint, $apiKey)->build();
 
