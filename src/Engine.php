@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection as BaseCollection;
 use Laravel\Scout\Builder;
 use Laravel\Scout\Engines\Engine as AbstractEngine;
+use Laravel\Scout\Searchable;
 use stdClass;
 
 final class Engine extends AbstractEngine
@@ -39,6 +40,11 @@ final class Engine extends AbstractEngine
         $this->searchRequestFactory = $searchRequestFactory;
     }
 
+    protected function engineName($model)
+    {
+        return str_replace('_', '-', $model->searchableAs());
+    }
+
     protected function maintainEngine($engine): Client
     {
         try {
@@ -59,10 +65,20 @@ final class Engine extends AbstractEngine
             return;
         }
 
-        $index = $models->first()->searchableAs();
-        $documents = $models->toArray();
+        $index = $this->engineName($models->first());
+        $client = $this->maintainEngine($index);
 
-        return $this->maintainEngine($index)->indexDocuments($index, $documents);
+        foreach ($models->chunk(100) as $chunk) {
+            $documents = $chunk->map(function ($model) {
+                return array_merge(
+                    [ 'id' => $model->id ],
+                    $model->toSearchableArray(),
+                    $model->scoutMetadata()
+                );
+            });
+
+            $this->maintainEngine($index)->indexDocuments($index, $documents->all());
+        }
     }
 
     /**
@@ -74,7 +90,7 @@ final class Engine extends AbstractEngine
             return;
         }
 
-        $index = $models->first()->searchableAs();
+        $index = $this->engineName($models->first());
         $documentIds = $models->map(function ($item) {
           return $item->id;
         });
@@ -117,7 +133,7 @@ final class Engine extends AbstractEngine
             );
         }
 
-        $index = $builder->model->searchableAs();
+        $index = $this->engineName($builder->model);
         $searchRequest = $this->searchRequestFactory->makeFromBuilder($builder, $options);
         return $client->search($index, $builder->query, $searchRequest);
     }
