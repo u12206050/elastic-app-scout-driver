@@ -4,6 +4,7 @@ namespace ElasticAppScoutDriver;
 
 use Elastic\AppSearch\Client\Client;
 use Elastic\AppSearch\Client\ClientBuilder;
+use Elastic\OpenApi\Codegen\Exception\NotFoundException;
 use ElasticAppScoutDriver\Factories\SearchRequestFactoryInterface;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Database\Eloquent\Model;
@@ -38,9 +39,11 @@ final class Engine extends AbstractEngine
         $this->searchRequestFactory = $searchRequestFactory;
     }
 
-    protected function maintainEngine($engine):Client
+    protected function maintainEngine($engine): Client
     {
-        if (! $this->client->getEngine($engine)) {
+        try {
+            $this->client->getEngine($engine);
+        } catch (NotFoundException $err) {
             $this->client->createEngine($engine);
         }
 
