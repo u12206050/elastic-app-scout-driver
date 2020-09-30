@@ -9,8 +9,6 @@ final class SearchRequestFactory implements SearchRequestFactoryInterface
 {
     public function makeFromBuilder(Builder $builder, array $options = []): ?array
     {
-        $query = $this->makeQuery($builder);
-
         $searchRequest = [];
 
         if ($filters = $this->makeFilters($builder)) {
@@ -52,13 +50,13 @@ final class SearchRequestFactory implements SearchRequestFactoryInterface
     /**
      * Make the page result information
      */
-    protected function makePaginator(Builder $builder, array $options): array
+    protected function makePaginator(Builder $builder, array $options): ?array
     {
         $page = [
             'size' => $options['perPage'] ?? $builder->limit,
             'current' => $options['page'] ?? 1
         ];
 
-        return $page;
+        return ! $page['size'] ? null : $page;
     }
 }

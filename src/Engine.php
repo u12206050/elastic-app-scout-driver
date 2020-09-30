@@ -135,6 +135,7 @@ final class Engine extends AbstractEngine
 
         $index = $this->engineName($builder->model);
         $searchRequest = $this->searchRequestFactory->makeFromBuilder($builder, $options);
+
         return $client->search($index, $builder->query, $searchRequest);
     }
 
@@ -147,7 +148,9 @@ final class Engine extends AbstractEngine
      */
     public function mapIds($results)
     {
-        return collect($results['results'])->pluck('id')->values();
+        return collect($results['results'])->map(function ($res) {
+            return $res['id']['raw'];
+        })->all();
     }
 
     /**
@@ -164,7 +167,7 @@ final class Engine extends AbstractEngine
             return $model->newCollection();
         }
 
-        $ids = $this->mapIds($results['results']);
+        $ids = $this->mapIds($results);
         $idPositions = array_flip($ids);
 
         return $model->getScoutModelsByIds(
