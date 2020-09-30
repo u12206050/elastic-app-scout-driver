@@ -1,0 +1,48 @@
+{
+  "name": "u12206050/elastic-app-scout-driver",
+  "type": "library",
+  "description": "Elastic app search driver for Laravel Scout",
+  "keywords": [
+    "scout",
+    "elastic",
+    "app-search",
+    "elasticsearch",
+    "laravel",
+    "driver",
+    "php"
+  ],
+  "homepage": "https://yourcompany.com",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Gerard Lamusse",
+      "role": "Developer"
+    }
+  ],
+  "autoload": {
+    "psr-4": {
+      "ElasticAppScoutDriver\\": "src"
+    }
+  },
+  "require": {
+    "php": "^7.2",
+    "elastic/app-search": "^7.3"
+  },
+  "require-dev": {
+    "phpunit/phpunit": "^8.5",
+    "orchestra/testbench": "^5.2",
+    "laravel/scout": "^8.0",
+    "friendsofphp/php-cs-fixer": "^2.16",
+    "phpstan/phpstan": "^0.12.32"
+  },
+  "config": {
+    "bin-dir": "bin"
+  },
+  "extra": {
+    "laravel": {
+      "providers": [
+        "ElasticAppScoutDriver\\ServiceProvider"
+      ]
+    }
+  }
+}
